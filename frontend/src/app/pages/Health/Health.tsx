@@ -111,6 +111,18 @@ const Health: React.FC = () => {
             textAlign: 'center',
           }}
         >
+          <Box
+            component="img"
+            src="/logo.png"
+            alt="OpenSwarm"
+            sx={{
+              width: 48,
+              height: 48,
+              objectFit: 'contain',
+              mb: 1,
+            }}
+          />
+
           <Typography
             variant="h6"
             sx={{
@@ -121,7 +133,7 @@ const Health: React.FC = () => {
               letterSpacing: '-0.01em',
             }}
           >
-            Clawd Swarm
+            OpenSwarm
           </Typography>
 
           <Typography
