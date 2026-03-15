@@ -16,11 +16,29 @@ chmod +x "$RUN_BACKEND_ABSPATH"
 
 BACKEND_DIR_ABSPATH="$(dirname "$RUN_BACKEND_ABSPATH")"
 
+# --- Find a working Python 3 ---
+PYTHON=""
+for candidate in python3.13 python3.12 python3.11 python3.10 python3; do
+    if command -v "$candidate" &>/dev/null && "$candidate" -c "print('ok')" &>/dev/null; then
+        PYTHON="$candidate"
+        break
+    fi
+done
+if [[ -z "$PYTHON" ]]; then
+    echo "Error: No working Python 3 found."
+    exit 1
+fi
+echo "Using Python: $PYTHON ($($PYTHON --version 2>&1))"
+
 # --- Create virtual environment if it doesn't exist ---
 VENV_DIR="$BACKEND_DIR_ABSPATH/.venv"
 if [[ ! -d "$VENV_DIR" ]]; then
-    formatted_echo --green "Creating virtual environment..."
-    python -m venv "$VENV_DIR"
+    echo "Creating virtual environment..."
+    "$PYTHON" -m venv "$VENV_DIR"
+    if [[ $? -ne 0 ]]; then
+        echo "Error: Failed to create virtual environment."
+        exit 1
+    fi
 fi
 source "$VENV_DIR/bin/activate"
 
@@ -35,5 +53,5 @@ fi
 
 # --- Start the backend server ---
 echo "Starting backend server on http://0.0.0.0:8324 ..."
-cd "$BACKEND_DIR_ABSPATH"
+cd "$BACKEND_DIR_ABSPATH/.."
 python -m uvicorn backend.main:app --host 0.0.0.0 --port 8324 --reload

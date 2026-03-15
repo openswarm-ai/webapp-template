@@ -14,7 +14,7 @@ else
 fi
 chmod +x "$RUN_FRONTEND_ABSPATH"
 
-$FRONTEND_DIR_ABSPATH="$(dirname "$RUN_FRONTEND_ABSPATH")"
+FRONTEND_DIR_ABSPATH="$(dirname "$RUN_FRONTEND_ABSPATH")"
 
 echo "Installing dependencies..."
 cd "$FRONTEND_DIR_ABSPATH"
