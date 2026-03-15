@@ -1,15 +1,15 @@
+Run both the frontend and backend:
+```bash
+bash run.sh
+```
 
-Running the frontend:
+
+Run frontend only:
 ```bash
 bash frontend/run/dev.sh
 ```
 
-Running the backend:
+Run backend only:
 ```bash
 bash backend/run/dev.sh
-```
-
-Running the debugger:
-```bash
-bash debugger/run.sh
 ```

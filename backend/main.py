@@ -1,10 +1,15 @@
-from fastapi.responses import JSONResponse
+import logging
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+
 from backend.config.Apps import MainApp
-from backend.apps.db.item_db import item_db
 from backend.apps.health.health import health
 from fastapi.middleware.cors import CORSMiddleware
 
-main_app = MainApp([item_db, health])
+main_app = MainApp([health])
 app = main_app.app
 
 # Add CORS middleware - allow all origins for development
