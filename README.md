@@ -3,7 +3,6 @@ Run both the frontend and backend:
 bash run.sh
 ```
 
-
 Run frontend only:
 ```bash
 bash frontend/run/dev.sh
