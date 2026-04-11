@@ -15,5 +15,6 @@ app.add_middleware(
 )
 
 if __name__ == "__main__":
+    import os
     import uvicorn
-    uvicorn.run("backend.main:app", host="0.0.0.0", port=8324, reload=True)
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=int(os.environ.get("BACKEND_PORT", 8324)), reload=True)

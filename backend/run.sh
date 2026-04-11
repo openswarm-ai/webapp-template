@@ -52,6 +52,6 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # --- Start the backend server ---
-echo "Starting backend server on http://0.0.0.0:8324 ..."
+echo "Starting backend server on http://0.0.0.0:${BACKEND_PORT:-8324} ..."
 cd "$BACKEND_DIR_ABSPATH/.."
-python -m uvicorn backend.main:app --host 0.0.0.0 --port 8324 --reload
+python -m uvicorn backend.main:app --host 0.0.0.0 --port "${BACKEND_PORT:-8324}" --reload

@@ -2,6 +2,12 @@
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+if [[ -f "$ROOT_DIR/.env" ]]; then
+    set -a
+    source "$ROOT_DIR/.env"
+    set +a
+fi
+
 cleanup() {
     echo ""
     echo "Shutting down all processes..."
@@ -10,7 +16,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-BACKEND_URL="http://localhost:8324/api/health/check"
+BACKEND_URL="http://localhost:${BACKEND_PORT:-8324}/api/health/check"
 MAX_WAIT=60
 
 echo "Starting backend..."

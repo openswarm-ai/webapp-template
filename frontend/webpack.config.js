@@ -67,10 +67,13 @@ module.exports = (env, argv) => {
     devServer: {
       static: { directory: path.join(__dirname, 'public') },
       compress: true,
-      port: 3000,
+      port: process.env.FRONTEND_PORT || 3000,
       hot: true,
       open: true,
-      historyApiFallback: true
+      historyApiFallback: true,
+      proxy: {
+        '/api': `http://localhost:${process.env.BACKEND_PORT || 8324}`,
+      },
     }
   };
 };

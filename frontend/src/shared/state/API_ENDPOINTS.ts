@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8324/api';
+const API_URL = '/api';
 
 // HEALTH - Endpoints
 export const HEALTH_CHECK_URL = API_URL + '/health/check';

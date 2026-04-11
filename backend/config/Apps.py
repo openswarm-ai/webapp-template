@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from contextlib import AsyncExitStack
 from typing import Callable
 from swarm_debug import debug
+import os
 
 class SubApp:
     def __init__(self, name:str, lifespan:Callable):
@@ -29,7 +30,7 @@ class MainApp:
                 for sub_app in sub_apps:
                     debug("Starting lifespan for sub_app: %s", sub_app.name)
                     await stack.enter_async_context(sub_app.lifespan())
-                debug("Check out the API docs at: http://127.0.0.1:8324/docs")
+                debug(f"Check out the API docs at: http://127.0.0.1:{os.environ.get('BACKEND_PORT', 8324)}/docs")
                 yield
                 
         self.app = FastAPI(lifespan=lifespan)
