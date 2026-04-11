@@ -17,12 +17,26 @@
 | State | Redux Toolkit | `frontend/src/shared/state/store.ts` |
 | Animation | Framer Motion | |
 | Routing | react-router-dom v7 | Installed, not yet wired |
-| Backend | FastAPI, Python 3.10+ | Uvicorn ASGI, port `8324` |
+| Backend | FastAPI, Python 3.10+ | Uvicorn ASGI, port configurable via `.env` |
 | Runtime types | typeguard | `@typechecked` decorator on endpoints |
+| Logging | swarm-debug | Lightweight `debug()` logger used in backend |
 
 ## Quick Start
 
-Both services (backend on `:8324`, frontend on `:3000`):
+**1.** Copy the environment file and set your variables:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` to configure ports (and any future settings):
+
+```
+BACKEND_PORT=8324
+FRONTEND_PORT=3000
+```
+
+**2.** Run both services:
 
 ```bash
 bash run.sh
@@ -35,15 +49,16 @@ bash backend/run.sh    # backend only
 bash frontend/run.sh   # frontend only
 ```
 
-API docs: `http://127.0.0.1:8324/docs`
+API docs: `http://127.0.0.1:<BACKEND_PORT>/docs`
 
 ## Project Structure
 
 ```
+├── .env                                # BACKEND_PORT, FRONTEND_PORT
 ├── run.sh                              # Starts backend → waits for health → starts frontend
 ├── backend/
 │   ├── run.sh                          # Venv setup, pip install -e ., uvicorn --reload
-│   ├── pyproject.toml                  # fastapi[standard], typeguard
+│   ├── pyproject.toml                  # fastapi[standard], typeguard, swarm-debug
 │   ├── main.py                         # App entry: registers SubApps, adds CORS
 │   ├── config/
 │   │   └── Apps.py                     # SubApp / MainApp plugin framework
