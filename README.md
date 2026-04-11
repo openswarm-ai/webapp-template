@@ -42,8 +42,8 @@ API docs: `http://127.0.0.1:8324/docs`
 ```
 ├── run.sh                              # Starts backend → waits for health → starts frontend
 ├── backend/
-│   ├── run.sh                          # Venv setup, pip install, uvicorn --reload
-│   ├── requirements.txt                # fastapi[standard], typeguard
+│   ├── run.sh                          # Venv setup, pip install -e ., uvicorn --reload
+│   ├── pyproject.toml                  # fastapi[standard], typeguard
 │   ├── main.py                         # App entry: registers SubApps, adds CORS
 │   ├── config/
 │   │   └── Apps.py                     # SubApp / MainApp plugin framework

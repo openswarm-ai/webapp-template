@@ -45,7 +45,7 @@ source "$VENV_DIR/bin/activate"
 # --- Install Python dependencies ---
 echo "Installing dependencies..."
 cd "$BACKEND_DIR_ABSPATH"
-pip install -r requirements.txt
+pip install .
 if [[ $? -ne 0 ]]; then
     echo "Error: Failed to install Python dependencies."
     exit 1

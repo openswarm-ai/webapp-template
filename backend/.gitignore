@@ -16,3 +16,6 @@ apps/db/snips/*
 
 # ignore .venv
 .venv/
+
+# ignore build artifacts
+*.egg-info/
