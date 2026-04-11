@@ -19,5 +19,5 @@ apps/db/snips/*
 
 # ignore build artifacts
 *.egg-info/
-
+build/
 openswarm_backend.egg-info/
