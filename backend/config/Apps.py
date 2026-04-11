@@ -21,7 +21,7 @@ class SubApp:
 
 class MainApp:
     def __init__(self, sub_apps: List[SubApp]):
-        debug("MainApp.__init__ START")
+        debug(" START")
         
         @asynccontextmanager
         async def lifespan(app: FastAPI):
@@ -29,7 +29,7 @@ class MainApp:
                 for sub_app in sub_apps:
                     debug("Starting lifespan for sub_app: %s", sub_app.name)
                     await stack.enter_async_context(sub_app.lifespan())
-                print("\nCheck out the API docs at: http://127.0.0.1:8324/docs\n")
+                debug("Check out the API docs at: http://127.0.0.1:8324/docs")
                 yield
                 
         self.app = FastAPI(lifespan=lifespan)
@@ -40,4 +40,4 @@ class MainApp:
                 prefix=sub_app.prefix,
                 tags=[sub_app.name]
             )
-        debug("MainApp.__init__ END")
+        debug("END")

@@ -1,10 +1,3 @@
-import logging
-
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-)
-
 from backend.config.Apps import MainApp
 from backend.apps.health.health import health
 from fastapi.middleware.cors import CORSMiddleware
