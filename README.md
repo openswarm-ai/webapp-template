@@ -17,6 +17,7 @@
 | State | Redux Toolkit | `frontend/src/shared/state/store.ts` |
 | Animation | Framer Motion | |
 | Routing | react-router-dom v7 | Installed, not yet wired |
+| Dev tools | vite-plugin-terminal | Logs `console.*` calls to the Vite terminal |
 | Backend | FastAPI, Python 3.10+ | Uvicorn ASGI, port configurable via `.env` |
 | Runtime types | typeguard | `@typechecked` decorator on endpoints |
 | Logging | swarm-debug | Lightweight `debug()` logger used in backend |
@@ -32,9 +33,11 @@ cp .env.example .env
 Edit `.env` to configure ports (and any future settings):
 
 ```
-BACKEND_PORT=8324
-FRONTEND_PORT=3000
+BACKEND_PORT=NONE   # set to a port number to enable the backend, or NONE for frontend-only mode
+FRONTEND_PORT=4949
 ```
+
+> **Frontend-only mode**: When `BACKEND_PORT=NONE` (the default), the backend is not started and the frontend runs standalone with no API proxy. Set it to a port number (e.g. `8324`) to enable the full stack.
 
 **2.** Run both services:
 
@@ -55,23 +58,29 @@ API docs: `http://127.0.0.1:<BACKEND_PORT>/docs`
 
 ```
 ├── .env                                # BACKEND_PORT, FRONTEND_PORT
+├── .env.example                        # Template env with defaults (BACKEND_PORT=NONE)
 ├── run.sh                              # Starts backend → waits for health → starts frontend
 ├── backend/
-│   ├── run.sh                          # Venv setup, pip install -e ., uvicorn --reload
+│   ├── __init__.py
+│   ├── run.sh                          # Venv setup, pip install, uvicorn --reload
 │   ├── pyproject.toml                  # fastapi[standard], typeguard, swarm-debug
 │   ├── main.py                         # App entry: registers SubApps, adds CORS
 │   ├── config/
+│   │   ├── __init__.py
 │   │   └── Apps.py                     # SubApp / MainApp plugin framework
 │   └── apps/
 │       └── health/
 │           └── health.py               # GET /api/health/check → PlainTextResponse "OK"
 └── frontend/
     ├── run.sh                          # npm install, vite dev server
+    ├── index.html                      # HTML entry point (mounts #root)
     ├── package.json
-    ├── vite.config.ts
+    ├── tsconfig.json
+    ├── vite.config.ts                  # Dev server, proxy, path alias, vite-plugin-terminal
     ├── DESIGN.md                       # Full design system specification
     └── src/
         ├── index.tsx                   # ReactDOM entry
+        ├── vite-env.d.ts               # Vite client type references
         ├── app/
         │   ├── Main.tsx                # Root: Redux Provider → ThemeProvider → page
         │   └── pages/

@@ -50,7 +50,7 @@ source "$VENV_DIR/bin/activate"
 # --- Install Python dependencies ---
 echo "Installing dependencies..."
 cd "$BACKEND_DIR_ABSPATH"
-pip install .
+pip install -e .
 if [[ $? -ne 0 ]]; then
     echo "Error: Failed to install Python dependencies."
     exit 1
