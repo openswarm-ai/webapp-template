@@ -16,7 +16,7 @@
 | UI | MUI v7, Emotion | Custom design token system (`frontend/DESIGN.md`) |
 | State | Redux Toolkit | `frontend/src/shared/state/store.ts` |
 | Animation | Framer Motion | |
-| Routing | react-router-dom v7 | Installed, not yet wired |
+| Routing | react-router-dom v7, vite-plugin-pages | File-based routing — `src/pages/*.tsx` auto-registers as routes |
 | Dev tools | vite-plugin-terminal | Logs `console.*` calls to the Vite terminal |
 | Backend | FastAPI, Python 3.10+ | Uvicorn ASGI, port configurable via `.env` |
 | Runtime types | typeguard | `@typechecked` decorator on endpoints |
@@ -76,16 +76,20 @@ API docs: `http://127.0.0.1:<BACKEND_PORT>/docs`
     ├── index.html                      # HTML entry point (mounts #root)
     ├── package.json
     ├── tsconfig.json
-    ├── vite.config.ts                  # Dev server, proxy, path alias, vite-plugin-terminal
+    ├── vite.config.ts                  # Dev server, proxy, path alias, vite-plugin-pages
     ├── DESIGN.md                       # Full design system specification
     └── src/
         ├── index.tsx                   # ReactDOM entry
-        ├── vite-env.d.ts               # Vite client type references
+        ├── vite-env.d.ts               # Vite + vite-plugin-pages type references
+        ├── pages/                      # File-based routes (auto-registered)
+        │   ├── index.tsx               # Home page → /
+        │   └── health.tsx              # Health check page → /health
         ├── app/
-        │   ├── Main.tsx                # Root: Redux Provider → ThemeProvider → page
-        │   └── pages/
-        │       └── Health/
-        │           └── Health.tsx      # Health check UI with latency display
+        │   ├── Main.tsx                # Root: Redux + Theme + BrowserRouter + AppShell
+        │   └── components/
+        │       └── Layout/
+        │           ├── AppShell.tsx    # Sidebar + scrollable content area
+        │           └── Sidebar.tsx    # Nav items, logo (collapse toggle), theme switch
         └── shared/
             ├── hooks.ts                # useAppDispatch, useAppSelector
             ├── state/
@@ -114,9 +118,13 @@ main_app = MainApp([health])
 app = main_app.app
 ```
 
-### Frontend — Token-Based Theming
+### Frontend — Layout, Routing & Theming
 
-All styling flows through a custom design token system layered on MUI — **not** MUI's built-in `theme.palette`. Tokens are accessed via hook:
+**File-based routing**: Any `.tsx` file in `frontend/src/pages/` automatically becomes a route via `vite-plugin-pages`. The filename maps to the URL path — `index.tsx` → `/`, `health.tsx` → `/health`. No manual route registration needed.
+
+**AppShell layout**: All pages render inside a persistent shell with a collapsible sidebar (click the logo to toggle) and a scrollable content area. The sidebar contains nav items and a dark/light theme switch.
+
+**Token-based theming**: All styling flows through a custom design token system layered on MUI — **not** MUI's built-in `theme.palette`. Tokens are accessed via hook:
 
 ```tsx
 const c = useClaudeTokens();
@@ -168,26 +176,39 @@ Routes become available at `/api/my_feature/example`.
 
 ### Add a Frontend Page
 
-**1.** Create `frontend/src/app/pages/{Name}/{Name}.tsx`:
+**1.** Create `frontend/src/pages/{name}.tsx` — the filename becomes the route (e.g. `settings.tsx` → `/settings`):
 
 ```tsx
-import { useClaudeTokens } from '@/shared/styles/ThemeContext';
+import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { useClaudeTokens } from '@/shared/styles/ThemeContext';
 
-const MyPage: React.FC = () => {
+const Settings: React.FC = () => {
   const c = useClaudeTokens();
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: c.bg.page, color: c.text.primary }}>
-      <Typography sx={{ fontFamily: c.font.serif }}>My Page</Typography>
+    <Box sx={{ p: 3 }}>
+      <Typography sx={{ fontFamily: c.font.serif, color: c.text.primary }}>Settings</Typography>
     </Box>
   );
 };
 
-export default MyPage;
+export default Settings;
 ```
 
-**2.** Wire into `frontend/src/app/Main.tsx`.
+The route registers automatically — no changes to `Main.tsx` needed.
+
+**2.** (Optional) Add a sidebar nav entry in `frontend/src/app/components/Layout/Sidebar.tsx`:
+
+```ts
+import SettingsIcon from '@mui/icons-material/Settings';
+
+const NAV_ITEMS = [
+  { path: '/', label: 'Home', icon: HomeIcon },
+  { path: '/health', label: 'Health', icon: FavoriteIcon },
+  { path: '/settings', label: 'Settings', icon: SettingsIcon },  // new
+];
+```
 
 ### Add a Redux Slice
 
