@@ -1,8 +1,10 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = (env, argv) => {
   const isDevelopment = argv.mode === 'development';
+  const backendEnabled = process.env.BACKEND_PORT && process.env.BACKEND_PORT !== 'NONE';
 
   return {
     entry: './src/index.tsx',
@@ -59,7 +61,10 @@ module.exports = (env, argv) => {
       new HtmlWebpackPlugin({
         template: './public/index.html',
         filename: 'index.html'
-      })
+      }),
+      new webpack.DefinePlugin({
+        'process.env.BACKEND_ENABLED': JSON.stringify(backendEnabled),
+      }),
     ],
 
     devtool: isDevelopment ? 'source-map' : false,
@@ -71,9 +76,11 @@ module.exports = (env, argv) => {
       hot: true,
       open: true,
       historyApiFallback: true,
-      proxy: {
-        '/api': `http://localhost:${process.env.BACKEND_PORT || 8324}`,
-      },
+      ...(backendEnabled && {
+        proxy: {
+          '/api': `http://localhost:${process.env.BACKEND_PORT || 8324}`,
+        },
+      }),
     }
   };
 };

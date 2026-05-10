@@ -8,9 +8,12 @@ import CircularProgress from '@mui/material/CircularProgress';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import CloudOffIcon from '@mui/icons-material/CloudOff';
 import { motion } from 'framer-motion';
 import { useClaudeTokens, useThemeMode } from '@/shared/styles/ThemeContext';
 import { HEALTH_CHECK_URL } from '@/shared/state/API_ENDPOINTS';
+
+const BACKEND_ENABLED = process.env.BACKEND_ENABLED;
 
 type HealthStatus = 'idle' | 'loading' | 'ok' | 'error';
 
@@ -144,7 +147,7 @@ const Health: React.FC = () => {
               fontFamily: c.font.serif,
             }}
           >
-            Backend health check
+            {BACKEND_ENABLED ? 'Backend health check' : 'Frontend-only mode'}
           </Typography>
 
           <Box
@@ -161,115 +164,156 @@ const Health: React.FC = () => {
               },
             }}
           >
-            <Box sx={{ p: 3 }}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 1,
-                  mb: 3,
-                }}
-              >
-                <FavoriteIcon
-                  sx={{
-                    fontSize: 16,
-                    color: c.accent.primary,
-                    ...(result.status === 'loading' && {
-                      '@keyframes pulse': {
-                        '0%, 100%': { opacity: 0.4, transform: 'scale(0.8)' },
-                        '50%': { opacity: 1, transform: 'scale(1.2)' },
+            {BACKEND_ENABLED ? (
+              <>
+                <Box sx={{ p: 3 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 1,
+                      mb: 3,
+                    }}
+                  >
+                    <FavoriteIcon
+                      sx={{
+                        fontSize: 16,
+                        color: c.accent.primary,
+                        ...(result.status === 'loading' && {
+                          '@keyframes pulse': {
+                            '0%, 100%': { opacity: 0.4, transform: 'scale(0.8)' },
+                            '50%': { opacity: 1, transform: 'scale(1.2)' },
+                          },
+                          animation: 'pulse 1.5s ease-in-out infinite',
+                        }),
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        color: c.text.secondary,
+                        fontFamily: c.font.serif,
+                      }}
+                    >
+                      Service Status
+                    </Typography>
+                  </Box>
+
+                  <Button
+                    onClick={pingHealth}
+                    disabled={result.status === 'loading'}
+                    variant="contained"
+                    disableElevation
+                    sx={{
+                      bgcolor: c.accent.primary,
+                      color: '#fff',
+                      fontWeight: 500,
+                      fontFamily: c.font.serif,
+                      fontSize: '0.875rem',
+                      borderRadius: `${c.radius.lg}px`,
+                      px: 3,
+                      py: 1,
+                      textTransform: 'none',
+                      transition: c.transition,
+                      '&:hover': {
+                        bgcolor: c.accent.hover,
                       },
-                      animation: 'pulse 1.5s ease-in-out infinite',
-                    }),
-                  }}
-                />
-                <Typography
-                  sx={{
-                    fontSize: '0.8rem',
-                    fontWeight: 600,
-                    color: c.text.secondary,
-                    fontFamily: c.font.serif,
-                  }}
-                >
-                  Service Status
-                </Typography>
-              </Box>
+                      '&:active': {
+                        bgcolor: c.accent.pressed,
+                        transform: 'scale(0.98)',
+                      },
+                      '&.Mui-disabled': {
+                        bgcolor: c.accent.primary,
+                        opacity: 0.6,
+                        color: '#fff',
+                      },
+                    }}
+                  >
+                    {result.status === 'loading' ? (
+                      <CircularProgress size={18} sx={{ color: '#fff', mr: 1 }} />
+                    ) : null}
+                    {result.status === 'loading' ? 'Pinging...' : 'Ping Health'}
+                  </Button>
+                </Box>
 
-              <Button
-                onClick={pingHealth}
-                disabled={result.status === 'loading'}
-                variant="contained"
-                disableElevation
-                sx={{
-                  bgcolor: c.accent.primary,
-                  color: '#fff',
-                  fontWeight: 500,
-                  fontFamily: c.font.serif,
-                  fontSize: '0.875rem',
-                  borderRadius: `${c.radius.lg}px`,
-                  px: 3,
-                  py: 1,
-                  textTransform: 'none',
-                  transition: c.transition,
-                  '&:hover': {
-                    bgcolor: c.accent.hover,
-                  },
-                  '&:active': {
-                    bgcolor: c.accent.pressed,
-                    transform: 'scale(0.98)',
-                  },
-                  '&.Mui-disabled': {
-                    bgcolor: c.accent.primary,
-                    opacity: 0.6,
-                    color: '#fff',
-                  },
-                }}
-              >
-                {result.status === 'loading' ? (
-                  <CircularProgress size={18} sx={{ color: '#fff', mr: 1 }} />
-                ) : null}
-                {result.status === 'loading' ? 'Pinging...' : 'Ping Health'}
-              </Button>
-            </Box>
-
-            {result.status !== 'idle' && result.status !== 'loading' && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                transition={{ duration: 0.25, ease: [0.165, 0.85, 0.45, 1] }}
-              >
+                {result.status !== 'idle' && result.status !== 'loading' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    transition={{ duration: 0.25, ease: [0.165, 0.85, 0.45, 1] }}
+                  >
+                    <Box
+                      sx={{
+                        borderTop: `0.5px solid ${c.border.medium}`,
+                        px: 3,
+                        py: 2,
+                        bgcolor: statusBg,
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: '0.8rem',
+                          fontWeight: 500,
+                          color: statusColor,
+                          fontFamily: c.font.mono,
+                          mb: 0.5,
+                        }}
+                      >
+                        {result.status === 'ok' ? 'Healthy' : 'Unreachable'}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontSize: '0.75rem',
+                          color: c.text.muted,
+                          fontFamily: c.font.mono,
+                        }}
+                      >
+                        Response: {result.message}
+                        {result.latencyMs !== null && ` · ${result.latencyMs}ms`}
+                      </Typography>
+                    </Box>
+                  </motion.div>
+                )}
+              </>
+            ) : (
+              <Box sx={{ p: 3 }}>
                 <Box
                   sx={{
-                    borderTop: `0.5px solid ${c.border.medium}`,
-                    px: 3,
-                    py: 2,
-                    bgcolor: statusBg,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 1,
+                    mb: 2,
                   }}
                 >
+                  <CloudOffIcon
+                    sx={{ fontSize: 16, color: c.text.tertiary }}
+                  />
                   <Typography
                     sx={{
                       fontSize: '0.8rem',
-                      fontWeight: 500,
-                      color: statusColor,
-                      fontFamily: c.font.mono,
-                      mb: 0.5,
+                      fontWeight: 600,
+                      color: c.text.secondary,
+                      fontFamily: c.font.serif,
                     }}
                   >
-                    {result.status === 'ok' ? 'Healthy' : 'Unreachable'}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: '0.75rem',
-                      color: c.text.muted,
-                      fontFamily: c.font.mono,
-                    }}
-                  >
-                    Response: {result.message}
-                    {result.latencyMs !== null && ` · ${result.latencyMs}ms`}
+                    No Backend Configured
                   </Typography>
                 </Box>
-              </motion.div>
+                <Typography
+                  sx={{
+                    fontSize: '0.75rem',
+                    color: c.text.muted,
+                    fontFamily: c.font.mono,
+                  }}
+                >
+                  Initialize the backend and set 
+                  <br />
+                  the BACKEND_PORT in .env.
+                </Typography>
+              </Box>
             )}
           </Box>
         </Box>

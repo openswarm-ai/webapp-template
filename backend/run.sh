@@ -14,6 +14,11 @@ else
 fi
 chmod +x "$RUN_BACKEND_ABSPATH"
 
+if [[ "${BACKEND_PORT}" == "NONE" ]]; then
+    echo "BACKEND_PORT=NONE — backend disabled. Exiting."
+    exit 0
+fi
+
 BACKEND_DIR_ABSPATH="$(dirname "$RUN_BACKEND_ABSPATH")"
 
 # --- Find a working Python 3 ---
