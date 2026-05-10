@@ -12,7 +12,7 @@
 
 | Layer | Tech | Notes |
 |---|---|---|
-| Frontend | React 18, TypeScript, Webpack 5 | Babel transpilation, path alias `@` → `src/` |
+| Frontend | React 18, TypeScript, Vite | Path alias `@` → `src/` |
 | UI | MUI v7, Emotion | Custom design token system (`frontend/DESIGN.md`) |
 | State | Redux Toolkit | `frontend/src/shared/state/store.ts` |
 | Animation | Framer Motion | |
@@ -66,9 +66,9 @@ API docs: `http://127.0.0.1:<BACKEND_PORT>/docs`
 │       └── health/
 │           └── health.py               # GET /api/health/check → PlainTextResponse "OK"
 └── frontend/
-    ├── run.sh                          # npm install, webpack-dev-server
+    ├── run.sh                          # npm install, vite dev server
     ├── package.json
-    ├── webpack.config.js
+    ├── vite.config.ts
     ├── DESIGN.md                       # Full design system specification
     └── src/
         ├── index.tsx                   # ReactDOM entry
