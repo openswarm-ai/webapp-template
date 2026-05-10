@@ -1,4 +1,3 @@
-// store/index.ts
 import { configureStore } from '@reduxjs/toolkit';
 import tempStateReducer from './tempStateSlice';
 
@@ -8,6 +7,7 @@ export const store = configureStore({
   },
 });
 
-// Optionally, export RootState and AppDispatch types for use with TypeScript
+console.log('[Store] Redux store created with slices:', Object.keys(store.getState()));
+
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

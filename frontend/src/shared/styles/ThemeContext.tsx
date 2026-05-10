@@ -136,7 +136,11 @@ const ClaudeThemeProvider: React.FC<ClaudeThemeProviderProps> = ({ children }) =
   const [mode, setMode] = useState<Mode>('light');
 
   const toggleMode = useCallback(() => {
-    setMode((prev) => (prev === 'light' ? 'dark' : 'light'));
+    setMode((prev) => {
+      const next = prev === 'light' ? 'dark' : 'light';
+      console.log(`[Theme] Toggled ${prev} → ${next}`);
+      return next;
+    });
   }, []);
 
   const tokens = useMemo(() => buildTokens(mode), [mode]);

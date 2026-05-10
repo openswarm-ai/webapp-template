@@ -14,6 +14,7 @@ import { useClaudeTokens, useThemeMode } from '@/shared/styles/ThemeContext';
 import { HEALTH_CHECK_URL } from '@/shared/state/API_ENDPOINTS';
 
 const BACKEND_ENABLED = process.env.BACKEND_ENABLED;
+console.log('[Health] BACKEND_ENABLED:', BACKEND_ENABLED ? 'true' : 'false');
 
 type HealthStatus = 'idle' | 'loading' | 'ok' | 'error';
 
@@ -33,6 +34,7 @@ const Health: React.FC = () => {
   });
 
   const pingHealth = useCallback(async () => {
+    console.log('[Health] Pinging', HEALTH_CHECK_URL);
     setResult({ status: 'loading', message: '', latencyMs: null });
     const start = performance.now();
     try {
@@ -40,15 +42,19 @@ const Health: React.FC = () => {
       const elapsed = Math.round(performance.now() - start);
       const text = await res.text();
       if (res.ok) {
+        console.log(`[Health] OK ${res.status} in ${elapsed}ms — ${text}`);
         setResult({ status: 'ok', message: text, latencyMs: elapsed });
       } else {
+        console.error(`[Health] HTTP ${res.status} in ${elapsed}ms — ${text}`);
         setResult({ status: 'error', message: `${res.status} — ${text}`, latencyMs: elapsed });
       }
     } catch (err) {
       const elapsed = Math.round(performance.now() - start);
+      const msg = err instanceof Error ? err.message : 'Network error';
+      console.error(`[Health] Fetch failed in ${elapsed}ms —`, msg);
       setResult({
         status: 'error',
-        message: err instanceof Error ? err.message : 'Network error',
+        message: msg,
         latencyMs: elapsed,
       });
     }

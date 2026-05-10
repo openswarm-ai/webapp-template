@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import terminal from 'vite-plugin-terminal';
 import path from 'path';
 
 export default defineConfig(({ mode }) => {
@@ -7,7 +8,10 @@ export default defineConfig(({ mode }) => {
   const backendEnabled = backendPort && backendPort !== 'NONE';
 
   return {
-    plugins: [react()],
+    plugins: [
+      react(),
+      terminal({ console: 'terminal', output: ['terminal', 'console'] }),
+    ],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),

@@ -1,5 +1,5 @@
 {
-  "name": "saas-skeleton",
+  "name": "open-swarm-app-template",
   "version": "1.0.0",
   "description": "SaaS skeleton frontend built with React",
   "scripts": {
@@ -25,6 +25,7 @@
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^4.3.4",
     "typescript": "^5.0.0",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vite-plugin-terminal": "^1.4.0"
   }
 }
