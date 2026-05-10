@@ -2,19 +2,14 @@ import React, { useState, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
 import CircularProgress from '@mui/material/CircularProgress';
-import LightModeIcon from '@mui/icons-material/LightMode';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import CloudOffIcon from '@mui/icons-material/CloudOff';
 import { motion } from 'framer-motion';
-import { useClaudeTokens, useThemeMode } from '@/shared/styles/ThemeContext';
+import { useClaudeTokens } from '@/shared/styles/ThemeContext';
 import { HEALTH_CHECK_URL } from '@/shared/state/API_ENDPOINTS';
 
 const BACKEND_ENABLED = process.env.BACKEND_ENABLED;
-console.log('[Health] BACKEND_ENABLED:', BACKEND_ENABLED ? 'true' : 'false');
 
 type HealthStatus = 'idle' | 'loading' | 'ok' | 'error';
 
@@ -26,7 +21,6 @@ interface HealthResult {
 
 const Health: React.FC = () => {
   const c = useClaudeTokens();
-  const { mode, toggleMode } = useThemeMode();
   const [result, setResult] = useState<HealthResult>({
     status: 'idle',
     message: '',
@@ -34,7 +28,6 @@ const Health: React.FC = () => {
   });
 
   const pingHealth = useCallback(async () => {
-    console.log('[Health] Pinging', HEALTH_CHECK_URL);
     setResult({ status: 'loading', message: '', latencyMs: null });
     const start = performance.now();
     try {
@@ -42,21 +35,14 @@ const Health: React.FC = () => {
       const elapsed = Math.round(performance.now() - start);
       const text = await res.text();
       if (res.ok) {
-        console.log(`[Health] OK ${res.status} in ${elapsed}ms — ${text}`);
         setResult({ status: 'ok', message: text, latencyMs: elapsed });
       } else {
-        console.error(`[Health] HTTP ${res.status} in ${elapsed}ms — ${text}`);
         setResult({ status: 'error', message: `${res.status} — ${text}`, latencyMs: elapsed });
       }
     } catch (err) {
       const elapsed = Math.round(performance.now() - start);
       const msg = err instanceof Error ? err.message : 'Network error';
-      console.error(`[Health] Fetch failed in ${elapsed}ms —`, msg);
-      setResult({
-        status: 'error',
-        message: msg,
-        latencyMs: elapsed,
-      });
+      setResult({ status: 'error', message: msg, latencyMs: elapsed });
     }
   }, []);
 
@@ -77,61 +63,20 @@ const Health: React.FC = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        bgcolor: c.bg.page,
-        position: 'relative',
+        minHeight: '100%',
         px: 2,
       }}
     >
-      <Tooltip title={mode === 'light' ? 'Dark mode' : 'Light mode'}>
-        <IconButton
-          onClick={toggleMode}
-          size="small"
-          sx={{
-            position: 'absolute',
-            top: 24,
-            right: 24,
-            color: c.text.tertiary,
-            '&:hover': { color: c.accent.primary, bgcolor: `${c.accent.primary}0A` },
-            transition: c.transition,
-          }}
-        >
-          {mode === 'light' ? (
-            <DarkModeIcon sx={{ fontSize: 20 }} />
-          ) : (
-            <LightModeIcon sx={{ fontSize: 20 }} />
-          )}
-        </IconButton>
-      </Tooltip>
-
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 380, damping: 30, mass: 0.8 }}
       >
-        <Box
-          sx={{
-            maxWidth: 440,
-            width: '100%',
-            textAlign: 'center',
-          }}
-        >
-          <Box
-            component="img"
-            src="/logo.png"
-            alt="OpenSwarm"
-            sx={{
-              width: 48,
-              height: 48,
-              objectFit: 'contain',
-              mb: 1,
-            }}
-          />
-
+        <Box sx={{ maxWidth: 440, width: '100%', textAlign: 'center' }}>
           <Typography
             variant="h6"
             sx={{
@@ -142,7 +87,7 @@ const Health: React.FC = () => {
               letterSpacing: '-0.01em',
             }}
           >
-            OpenSwarm
+            Health
           </Typography>
 
           <Typography
@@ -223,9 +168,7 @@ const Health: React.FC = () => {
                       py: 1,
                       textTransform: 'none',
                       transition: c.transition,
-                      '&:hover': {
-                        bgcolor: c.accent.hover,
-                      },
+                      '&:hover': { bgcolor: c.accent.hover },
                       '&:active': {
                         bgcolor: c.accent.pressed,
                         transform: 'scale(0.98)',
@@ -294,9 +237,7 @@ const Health: React.FC = () => {
                     mb: 2,
                   }}
                 >
-                  <CloudOffIcon
-                    sx={{ fontSize: 16, color: c.text.tertiary }}
-                  />
+                  <CloudOffIcon sx={{ fontSize: 16, color: c.text.tertiary }} />
                   <Typography
                     sx={{
                       fontSize: '0.8rem',
@@ -315,7 +256,7 @@ const Health: React.FC = () => {
                     fontFamily: c.font.mono,
                   }}
                 >
-                  Initialize the backend and set 
+                  Initialize the backend and set
                   <br />
                   the BACKEND_PORT in .env.
                 </Typography>

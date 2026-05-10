@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import Pages from 'vite-plugin-pages';
 import terminal from 'vite-plugin-terminal';
 import path from 'path';
 
@@ -10,6 +11,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
+      Pages({ dirs: 'src/pages', extensions: ['tsx'] }),
       terminal({ console: 'terminal', output: ['terminal', 'console'] }),
     ],
     resolve: {

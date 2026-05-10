@@ -1,18 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { Suspense } from 'react';
 import { Provider } from 'react-redux';
+import { BrowserRouter, useRoutes } from 'react-router-dom';
+import routes from '~react-pages';
 import { store } from '../shared/state/store';
 import ClaudeThemeProvider from '@/shared/styles/ThemeContext';
-import Health from '@/app/pages/Health/Health';
+import AppShell from '@/app/components/Layout/AppShell';
+
+const Pages: React.FC = () => {
+  return <Suspense fallback={null}>{useRoutes(routes)}</Suspense>;
+};
 
 const Main: React.FC = () => {
-  useEffect(() => {
-    console.log('[Main] Provider tree mounted (Redux + Theme + Page)');
-  }, []);
-
   return (
     <Provider store={store}>
       <ClaudeThemeProvider>
-        <Health />
+        <BrowserRouter>
+          <AppShell>
+            <Pages />
+          </AppShell>
+        </BrowserRouter>
       </ClaudeThemeProvider>
     </Provider>
   );

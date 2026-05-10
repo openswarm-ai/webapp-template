@@ -417,21 +417,27 @@ sx={{
 
 ## Part 8: File & Folder Conventions
 
-```
-src/app/pages/FeatureName/
-  FeatureName.tsx           # Main page component
-  SubComponent.tsx          # Related sub-components
+Routes use **file-based routing** via `vite-plugin-pages`. Any `.tsx` file in `src/pages/` automatically becomes a route (e.g. `src/pages/health.tsx` → `/health`, `src/pages/index.tsx` → `/`).
 
-src/app/components/
-  SharedComponent.tsx       # Truly shared/reusable
-  Layout/
-    AppShell.tsx
+```
+src/pages/                    # File-based routes (auto-registered)
+  index.tsx                   # Home page → /
+  health.tsx                  # Health page → /health
+  settings.tsx                # Example → /settings
+
+src/app/
+  Main.tsx                    # Root: providers + BrowserRouter + AppShell
+  components/
+    Layout/
+      AppShell.tsx            # Sidebar + content area shell
+      Sidebar.tsx             # Navigation rail, theme toggle
+    SharedComponent.tsx       # Truly shared/reusable
 
 src/shared/
-  hooks/                    # Custom hooks
-  state/                    # Redux slices
-  styles/                   # Theme tokens, context
-  modals/                   # Modal components
+  hooks.ts                    # useAppDispatch, useAppSelector
+  state/                      # Redux slices
+  styles/                     # Theme tokens, context
+  modals/                     # Modal components
 ```
 
 ---
